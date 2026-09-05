@@ -9,7 +9,15 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import org.hibernate.validator.constraints.Length;
+import org.jspecify.annotations.Nullable;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -17,7 +25,7 @@ import java.util.UUID;
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class User extends AbstractSoftDeleteEntity{
+public class User extends AbstractSoftDeleteEntity implements UserDetails {
 
     @Length(max = 200, message = "Apelido deve ter no máximo 200 caracteres")
     @Column(name = "nickname", length = 200)
@@ -25,12 +33,13 @@ public class User extends AbstractSoftDeleteEntity{
 
     @NotNull(message = "Função do usuário é obrigatória")
     @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @Column(name = "role", nullable = false, columnDefinition = "user_role")
     private Role role;
 
     @NotNull(message = "Status do usuário é obrigatório")
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @Column(name = "status", nullable = false, columnDefinition = "user_status")
     private UserStatus status;
 
     @NotBlank(message = "Primeiro nome é obrigatório")
@@ -73,6 +82,41 @@ public class User extends AbstractSoftDeleteEntity{
         this.email = email;
         this.passwordHash = passwordHash;
         this.bookingBlocked = false;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
+
+    @Override
+    public @Nullable String getPassword() {
+        return this.passwordHash;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("ROLE_" + this.role.name()));
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return this.status == UserStatus.ACTIVE;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
     }
 
     @Override
