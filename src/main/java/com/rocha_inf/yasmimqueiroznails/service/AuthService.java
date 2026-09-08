@@ -9,6 +9,7 @@ import com.rocha_inf.yasmimqueiroznails.exception.EmailAlreadyExistsException;
 import com.rocha_inf.yasmimqueiroznails.exception.PhoneNumberAlreadyExistsException;
 import com.rocha_inf.yasmimqueiroznails.mapstruct.UserMapper;
 import com.rocha_inf.yasmimqueiroznails.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,12 +17,12 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final SecurityConfig securityConfig;
+    private final PasswordEncoder passwordEncoder;
 
-    public AuthService(UserRepository userRepository, UserMapper userMapper, SecurityConfig securityConfig) {
+    public AuthService(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
-        this.securityConfig = securityConfig;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public RegisterResponse register(RegisterRequest request) throws EmailAlreadyExistsException, PhoneNumberAlreadyExistsException {
@@ -34,7 +35,7 @@ public class AuthService {
             throw new PhoneNumberAlreadyExistsException("Número de telefone já cadastrado");
         }
 
-        String encodedPassword = securityConfig.passwordEncoder().encode(request.password());
+        String encodedPassword = passwordEncoder.encode(request.password());
 
         User user = userMapper.toEntity(request, encodedPassword);
         User savedUser = userRepository.save(user);
