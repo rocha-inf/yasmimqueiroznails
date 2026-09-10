@@ -1,4 +1,4 @@
-package com.rocha_inf.yasmimqueiroznails.entity;
+package com.rocha_inf.yasmimqueiroznails.shared.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Id;

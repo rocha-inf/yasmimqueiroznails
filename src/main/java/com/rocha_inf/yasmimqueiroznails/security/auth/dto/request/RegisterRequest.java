@@ -1,4 +1,4 @@
-package com.rocha_inf.yasmimqueiroznails.dto.request;
+package com.rocha_inf.yasmimqueiroznails.security.auth.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

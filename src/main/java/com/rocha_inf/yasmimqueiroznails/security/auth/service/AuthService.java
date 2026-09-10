@@ -1,4 +1,4 @@
-package com.rocha_inf.yasmimqueiroznails.service;
+package com.rocha_inf.yasmimqueiroznails.security.auth.service;
 
 import com.rocha_inf.yasmimqueiroznails.config.SecurityConfig;
 import com.rocha_inf.yasmimqueiroznails.dto.request.RegisterRequest;
@@ -9,6 +9,14 @@ import com.rocha_inf.yasmimqueiroznails.exception.EmailAlreadyExistsException;
 import com.rocha_inf.yasmimqueiroznails.exception.PhoneNumberAlreadyExistsException;
 import com.rocha_inf.yasmimqueiroznails.mapstruct.UserMapper;
 import com.rocha_inf.yasmimqueiroznails.repository.UserRepository;
+import com.rocha_inf.yasmimqueiroznails.security.auth.dto.request.RegisterRequest;
+import com.rocha_inf.yasmimqueiroznails.security.auth.dto.respose.RegisterResponse;
+import com.rocha_inf.yasmimqueiroznails.user.entity.User;
+import com.rocha_inf.yasmimqueiroznails.user.enums.UserStatus;
+import com.rocha_inf.yasmimqueiroznails.user.exception.EmailAlreadyExistsException;
+import com.rocha_inf.yasmimqueiroznails.user.exception.PhoneNumberAlreadyExistsException;
+import com.rocha_inf.yasmimqueiroznails.user.mapstruct.UserMapper;
+import com.rocha_inf.yasmimqueiroznails.user.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

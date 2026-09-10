@@ -1,4 +1,4 @@
-package com.rocha_inf.yasmimqueiroznails.config;
+package com.rocha_inf.yasmimqueiroznails.security.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

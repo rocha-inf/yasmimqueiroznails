@@ -1,6 +1,6 @@
-package com.rocha_inf.yasmimqueiroznails.dto.respose;
+package com.rocha_inf.yasmimqueiroznails.security.auth.dto.respose;
 
-import com.rocha_inf.yasmimqueiroznails.enums.Role;
+import com.rocha_inf.yasmimqueiroznails.user.enums.Role;
 
 import java.util.UUID;
 

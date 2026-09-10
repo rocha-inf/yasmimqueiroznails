@@ -1,7 +1,7 @@
-package com.rocha_inf.yasmimqueiroznails.repository;
+package com.rocha_inf.yasmimqueiroznails.user.repository;
 
-import com.rocha_inf.yasmimqueiroznails.entity.User;
-import com.rocha_inf.yasmimqueiroznails.enums.UserStatus;
+import com.rocha_inf.yasmimqueiroznails.user.entity.User;
+import com.rocha_inf.yasmimqueiroznails.user.enums.UserStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

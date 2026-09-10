@@ -1,7 +1,8 @@
-package com.rocha_inf.yasmimqueiroznails.entity;
+package com.rocha_inf.yasmimqueiroznails.user.entity;
 
-import com.rocha_inf.yasmimqueiroznails.enums.Role;
-import com.rocha_inf.yasmimqueiroznails.enums.UserStatus;
+import com.rocha_inf.yasmimqueiroznails.shared.entity.AbstractSoftDeleteEntity;
+import com.rocha_inf.yasmimqueiroznails.user.enums.Role;
+import com.rocha_inf.yasmimqueiroznails.user.enums.UserStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
