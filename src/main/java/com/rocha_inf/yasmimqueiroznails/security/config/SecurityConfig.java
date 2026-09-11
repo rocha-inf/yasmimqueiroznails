@@ -30,6 +30,7 @@ public class SecurityConfig {
         return http
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(HttpMethod.POST,"/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/category/create").hasRole("PROFESSIONAL")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
