@@ -22,7 +22,7 @@ public class BlockController {
     }
 
     @PostMapping("/once")
-    public ResponseEntity<?> createBlockOnce(@Valid @RequestBody BlockOnceRequest request){
+    public ResponseEntity<BlockOnceResponse> createBlockOnce(@Valid @RequestBody BlockOnceRequest request){
         BlockOnceResponse response = blockOnceService.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
