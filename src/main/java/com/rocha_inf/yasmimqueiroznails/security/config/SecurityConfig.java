@@ -31,6 +31,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(HttpMethod.POST,"/auth/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/category/create").hasRole("PROFESSIONAL")
+                        .requestMatchers(HttpMethod.POST, "/blocks/once").hasRole("PROFESSIONAL")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
