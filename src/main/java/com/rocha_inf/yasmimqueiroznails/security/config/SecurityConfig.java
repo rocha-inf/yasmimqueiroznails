@@ -32,6 +32,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST,"/auth/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/category/create").hasRole("PROFESSIONAL")
                         .requestMatchers(HttpMethod.POST, "/blocks/once").hasRole("PROFESSIONAL")
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
@@ -41,7 +42,7 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
-                //.cors(cors -> cors)
+                .cors(cors -> {})
                 //.exceptionHandling
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
