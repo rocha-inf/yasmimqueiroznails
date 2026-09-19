@@ -20,7 +20,7 @@ import java.util.UUID;
 @Setter
 public class Offering extends AbstractSoftDeleteEntity {
 
-    @NotBlank(message = "Criador de Offering é obrigatório")
+    @NotNull(message = "Criador de Offering é obrigatório")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User createdBy;
@@ -75,8 +75,8 @@ public class Offering extends AbstractSoftDeleteEntity {
     public String toString() {
         return "Offering{" +
                 "id=" + id +
-                ", createdBy=" + createdBy +
-                ", category=" + category +
+                ", createdBy=" + createdBy.getEmail() +
+                ", category=" + category.getName() +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", price=" + price +
