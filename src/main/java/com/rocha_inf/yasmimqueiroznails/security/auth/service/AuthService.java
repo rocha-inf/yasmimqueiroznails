@@ -1,5 +1,6 @@
 package com.rocha_inf.yasmimqueiroznails.security.auth.service;
 
+import com.rocha_inf.yasmimqueiroznails.email.service.EmailService;
 import com.rocha_inf.yasmimqueiroznails.security.auth.dto.request.LoginRequest;
 import com.rocha_inf.yasmimqueiroznails.security.auth.dto.request.RegisterRequest;
 import com.rocha_inf.yasmimqueiroznails.security.auth.dto.respose.LoginResponse;
@@ -27,13 +28,15 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final EmailService emailService;
 
-    public AuthService(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtService jwtService) {
+    public AuthService(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtService jwtService, EmailService emailService) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
+        this.emailService = emailService;
     }
 
     public RegisterResponse register(RegisterRequest request) throws EmailAlreadyExistsException, PhoneNumberAlreadyExistsException {
@@ -50,8 +53,11 @@ public class AuthService {
 
         User user = userMapper.toEntity(request, encodedPassword);
         User savedUser = userRepository.save(user);
+        RegisterResponse response = userMapper.toRegisterResponse(savedUser);
 
-        return userMapper.toRegisterResponse(savedUser);
+        emailService.sendWelcomeEmail(response);
+
+        return response;
 
     }
 
