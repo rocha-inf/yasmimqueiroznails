@@ -1,4 +1,17 @@
 services:
+  rabbitmq:
+    image: rabbitmq:4-management
+    ports:
+      - "${RABBITMQ_PORT}:5672"
+      - "${RABBITMQ_MANAGEMENT_PORT}:15672"
+    container_name: "yasmimqueiroznails-rabbitmq"
+    restart: always
+    volumes:
+      - ./data-rabbitmq:/var/lib/rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+
   postgresql:
     image: postgres:alpine
     ports:
@@ -14,3 +27,4 @@ services:
 
 volumes:
   data-postgresql:
+  rabbitmq_data:

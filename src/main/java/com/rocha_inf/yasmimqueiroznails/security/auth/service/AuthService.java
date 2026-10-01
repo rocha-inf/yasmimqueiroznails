@@ -5,6 +5,8 @@ import com.rocha_inf.yasmimqueiroznails.security.auth.dto.request.LoginRequest;
 import com.rocha_inf.yasmimqueiroznails.security.auth.dto.request.RegisterRequest;
 import com.rocha_inf.yasmimqueiroznails.security.auth.dto.respose.LoginResponse;
 import com.rocha_inf.yasmimqueiroznails.security.auth.dto.respose.RegisterResponse;
+import com.rocha_inf.yasmimqueiroznails.security.auth.message.WelcomeEmailMessage;
+import com.rocha_inf.yasmimqueiroznails.shared.rabbitmq.publisher.EmailPublisher;
 import com.rocha_inf.yasmimqueiroznails.user.entity.User;
 import com.rocha_inf.yasmimqueiroznails.user.enums.UserStatus;
 import com.rocha_inf.yasmimqueiroznails.user.exception.EmailAlreadyExistsException;
@@ -28,15 +30,15 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
-    private final EmailService emailService;
+    private final EmailPublisher emailPublisher;
 
-    public AuthService(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtService jwtService, EmailService emailService) {
+    public AuthService(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtService jwtService, EmailPublisher emailPublisher) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
-        this.emailService = emailService;
+        this.emailPublisher = emailPublisher;
     }
 
     public RegisterResponse register(RegisterRequest request) throws EmailAlreadyExistsException, PhoneNumberAlreadyExistsException {
@@ -53,11 +55,11 @@ public class AuthService {
 
         User user = userMapper.toEntity(request, encodedPassword);
         User savedUser = userRepository.save(user);
-        RegisterResponse response = userMapper.toRegisterResponse(savedUser);
 
-        emailService.sendWelcomeEmail(response);
+        WelcomeEmailMessage welcomeEmailMessage = userMapper.toWelcomeEmailMessage(savedUser);
+        emailPublisher.publishWelcomeEmail(welcomeEmailMessage);
 
-        return response;
+        return userMapper.toRegisterResponse(savedUser);
 
     }
 

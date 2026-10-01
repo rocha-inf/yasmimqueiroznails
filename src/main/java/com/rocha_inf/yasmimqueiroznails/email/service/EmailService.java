@@ -1,6 +1,7 @@
 package com.rocha_inf.yasmimqueiroznails.email.service;
 
 import com.rocha_inf.yasmimqueiroznails.security.auth.dto.respose.RegisterResponse;
+import com.rocha_inf.yasmimqueiroznails.security.auth.message.WelcomeEmailMessage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -31,8 +32,9 @@ public class EmailService {
 
     }
 
-    public void sendWelcomeEmail(RegisterResponse user){
-        send(user.email(), "Boas vindas", "mensagem de boas vindas");
+    public void sendWelcomeEmail(WelcomeEmailMessage message){
+        String subject = "Boas vindas, " + message.firstName() + "!";
+        send(message.email(), subject, "Mensagem de boas vindas");
     }
 
 }
