@@ -36,11 +36,26 @@ public class RabbitMqConfig {
     }
 
     @Bean
-    public Binding emailBinding(Queue emailWelcomeQueue, TopicExchange emailExchange){
+    public Binding emailWelcomeBinding(Queue emailWelcomeQueue, TopicExchange emailExchange){
         return BindingBuilder
                 .bind(emailWelcomeQueue)
                 .to(emailExchange)
                 .with(mqPropertiesConfig.email().welcome().routingKey());
+    }
+
+    @Bean
+    public Queue emailVerificationQueue(){
+        return QueueBuilder
+                .durable(mqPropertiesConfig.email().verification().queue())
+                .build();
+    }
+
+    @Bean
+    public Binding emailVerificationBinding(Queue emailVerificationQueue, TopicExchange emailExchange){
+        return BindingBuilder
+                .bind(emailVerificationQueue)
+                .to(emailExchange)
+                .with(mqPropertiesConfig.email().verification().routingKey());
     }
 
 }
