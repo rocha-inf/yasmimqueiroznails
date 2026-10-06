@@ -40,6 +40,7 @@ public class AuthController {
     @GetMapping("/verify-email")
     public ResponseEntity<Void> verifyEmail(@RequestParam String token){
 
+        System.out.println("token: " + token);
         authService.verifyEmail(token);
         return ResponseEntity.noContent().build();
 

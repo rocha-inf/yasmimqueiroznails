@@ -1,6 +1,9 @@
 package com.rocha_inf.yasmimqueiroznails.security.auth.service;
 
+import com.rocha_inf.yasmimqueiroznails.email.entity.EmailVerificationToken;
+import com.rocha_inf.yasmimqueiroznails.email.exception.InvalidTokenException;
 import com.rocha_inf.yasmimqueiroznails.email.service.EmailService;
+import com.rocha_inf.yasmimqueiroznails.email.service.EmailVerificationTokenService;
 import com.rocha_inf.yasmimqueiroznails.security.auth.dto.request.LoginRequest;
 import com.rocha_inf.yasmimqueiroznails.security.auth.dto.request.RegisterRequest;
 import com.rocha_inf.yasmimqueiroznails.security.auth.dto.respose.LoginResponse;
@@ -30,15 +33,15 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
-    private final EmailPublisher emailPublisher;
+    private final EmailVerificationTokenService emailVerificationTokenService;
 
-    public AuthService(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtService jwtService, EmailPublisher emailPublisher) {
+    public AuthService(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtService jwtService, EmailVerificationTokenService emailVerificationTokenService) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
-        this.emailPublisher = emailPublisher;
+        this.emailVerificationTokenService = emailVerificationTokenService;
     }
 
     public RegisterResponse register(RegisterRequest request) throws EmailAlreadyExistsException, PhoneNumberAlreadyExistsException {
@@ -56,10 +59,10 @@ public class AuthService {
         User user = userMapper.toEntity(request, encodedPassword);
         User savedUser = userRepository.save(user);
 
-        WelcomeEmailMessage welcomeEmailMessage = userMapper.toWelcomeEmailMessage(savedUser);
-        emailPublisher.publishWelcomeEmail(welcomeEmailMessage);
+        RegisterResponse response = userMapper.toRegisterResponse(savedUser);
+        emailVerificationTokenService.create(response);
 
-        return userMapper.toRegisterResponse(savedUser);
+        return response;
 
     }
 
@@ -75,6 +78,16 @@ public class AuthService {
         String token = jwtService.generateToken(user.getId());
 
         return new LoginResponse(token);
+    }
+
+
+    public void verifyEmail(String token){
+
+        if (token == null || token.isBlank()){
+            throw new InvalidTokenException("Token não pode ser nulo ou vazio");
+        }
+
+        emailVerificationTokenService.verifyEmail(token);
     }
 
 }

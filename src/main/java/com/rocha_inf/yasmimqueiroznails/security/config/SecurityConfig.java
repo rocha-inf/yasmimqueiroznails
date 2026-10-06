@@ -30,6 +30,7 @@ public class SecurityConfig {
         return http
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(HttpMethod.POST,"/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/auth/verify-email").permitAll()
                         .requestMatchers(HttpMethod.POST, "/offerings").hasRole("PROFESSIONAL")
                         .requestMatchers(HttpMethod.POST, "/category/create").hasRole("PROFESSIONAL")
                         .requestMatchers(HttpMethod.POST, "/blocks/once").hasRole("PROFESSIONAL")

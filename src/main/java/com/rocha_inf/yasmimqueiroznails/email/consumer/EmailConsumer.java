@@ -1,6 +1,7 @@
 package com.rocha_inf.yasmimqueiroznails.email.consumer;
 
 import com.rocha_inf.yasmimqueiroznails.email.service.EmailService;
+import com.rocha_inf.yasmimqueiroznails.security.auth.message.VerificationEmailMessage;
 import com.rocha_inf.yasmimqueiroznails.security.auth.message.WelcomeEmailMessage;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,11 @@ public class EmailConsumer {
     public void consumeWelcomeEmail(WelcomeEmailMessage message) {
         System.out.println("Email received: " + message.email());
         emailService.sendWelcomeEmail(message);
+    }
+
+    @RabbitListener(queues = "email.verification.queue")
+    public void consumeVerificationEmail(VerificationEmailMessage message){
+        emailService.sendVerificationEmail(message);
     }
 
 }

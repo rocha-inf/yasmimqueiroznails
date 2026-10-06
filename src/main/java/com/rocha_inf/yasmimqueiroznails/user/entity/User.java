@@ -120,6 +120,11 @@ public class User extends AbstractSoftDeleteEntity implements UserDetails {
         return true;
     }
 
+
+    public void activate() {
+        this.status = UserStatus.ACTIVE;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof User user)) return false;

@@ -1,6 +1,7 @@
 package com.rocha_inf.yasmimqueiroznails.email.service;
 
 import com.rocha_inf.yasmimqueiroznails.security.auth.dto.respose.RegisterResponse;
+import com.rocha_inf.yasmimqueiroznails.security.auth.message.VerificationEmailMessage;
 import com.rocha_inf.yasmimqueiroznails.security.auth.message.WelcomeEmailMessage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
@@ -34,7 +35,13 @@ public class EmailService {
 
     public void sendWelcomeEmail(WelcomeEmailMessage message){
         String subject = "Boas vindas, " + message.firstName() + "!";
-        send(message.email(), subject, "Mensagem de boas vindas");
+        this.send(message.email(), subject, "Mensagem de boas vindas");
+    }
+
+    public void sendVerificationEmail(VerificationEmailMessage message){
+        String subject = "Verificação de e-mail";
+        String body = "Clique no link para verificar seu e-mail: " + message.verificationURL();
+        this.send(message.email(), subject, body);
     }
 
 }

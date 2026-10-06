@@ -1,5 +1,6 @@
 package com.rocha_inf.yasmimqueiroznails.shared.rabbitmq.publisher;
 
+import com.rocha_inf.yasmimqueiroznails.security.auth.message.VerificationEmailMessage;
 import com.rocha_inf.yasmimqueiroznails.security.auth.message.WelcomeEmailMessage;
 import com.rocha_inf.yasmimqueiroznails.shared.rabbitmq.config.RabbitMqPropertiesConfig;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -21,6 +22,14 @@ public class EmailPublisher {
                 mqPropertiesConfig.email().exchange(),
                 mqPropertiesConfig.email().welcome().routingKey(),
                 welcomeEmailMessage);
+    }
+
+    public void publishVerificationEmail(VerificationEmailMessage verificationEmailMessage){
+        rabbitTemplate.convertAndSend(
+                mqPropertiesConfig.email().exchange(),
+                mqPropertiesConfig.email().verification().routingKey(),
+                verificationEmailMessage
+        );
     }
 
 }
