@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public abstract class AbstractSoftDeleteEntity extends com.rocha_inf.yasmimqueiroznails.shared.entity.AbstractBaseEntity {
+public abstract class AbstractSoftDeleteEntity extends AbstractBaseEntity {
 
     @Column(name = "deleted_at")
     protected LocalDateTime deletedAt;

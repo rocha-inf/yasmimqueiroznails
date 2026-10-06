@@ -1,11 +1,11 @@
-package com.rocha_inf.yasmimqueiroznails.scheduling.dto.request;
+package com.rocha_inf.yasmimqueiroznails.block.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 
-public record BlockOnceRequest(
+public record BlockRequest(
         @NotBlank(message = "Nome é obrigatório")
         String name,
 

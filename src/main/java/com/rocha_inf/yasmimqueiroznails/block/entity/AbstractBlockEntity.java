@@ -1,4 +1,4 @@
-package com.rocha_inf.yasmimqueiroznails.scheduling.entity;
+package com.rocha_inf.yasmimqueiroznails.block.entity;
 
 import com.rocha_inf.yasmimqueiroznails.shared.entity.AbstractSoftDeleteEntity;
 import jakarta.persistence.Column;
@@ -23,6 +23,5 @@ public abstract class AbstractBlockEntity extends AbstractSoftDeleteEntity {
 
     @Column(name = "description", columnDefinition = "TEXT")
     protected String description;
-
 
 }

@@ -1,6 +1,5 @@
-package com.rocha_inf.yasmimqueiroznails.scheduling.entity;
+package com.rocha_inf.yasmimqueiroznails.block.entity;
 
-import com.rocha_inf.yasmimqueiroznails.catalog.entity.Category;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -16,11 +15,11 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Table(name = "block_once")
+@Table(name = "block")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Setter
-public class BlockOnce extends AbstractBlockEntity{
+public class Block extends AbstractBlockEntity {
 
     @NotNull(message = "Data de inicio do bloqueio é obrigatório")
     @Future(message = "Data de inicio do bloqueio deve ser posterior ao tempo presente")
@@ -32,7 +31,7 @@ public class BlockOnce extends AbstractBlockEntity{
     @Column(name = "ends_at", nullable = false)
     private LocalDateTime endsAt;
 
-    public BlockOnce(String name, String description, LocalDateTime startsAt, LocalDateTime endsAt) {
+    public Block(String name, String description, LocalDateTime startsAt, LocalDateTime endsAt) {
         this.id = UUID.randomUUID();
         this.name = name;
         this.description = description;
@@ -42,8 +41,8 @@ public class BlockOnce extends AbstractBlockEntity{
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof BlockOnce blockOnce)) return false;
-        return Objects.equals(this.id, blockOnce.id);
+        if (!(o instanceof Block block)) return false;
+        return Objects.equals(this.id, block.id);
     }
 
     @Override
@@ -53,7 +52,7 @@ public class BlockOnce extends AbstractBlockEntity{
 
     @Override
     public String toString() {
-        return "BlockOnce{" +
+        return "Block{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
