@@ -17,7 +17,6 @@ public class EmailConsumer {
 
     @RabbitListener(queues = "email.welcome.queue")
     public void consumeWelcomeEmail(WelcomeEmailMessage message) {
-        System.out.println("Email received: " + message.email());
         emailService.sendWelcomeEmail(message);
     }
 

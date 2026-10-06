@@ -10,6 +10,7 @@ import com.rocha_inf.yasmimqueiroznails.security.auth.message.VerificationEmailM
 import com.rocha_inf.yasmimqueiroznails.security.auth.message.WelcomeEmailMessage;
 import com.rocha_inf.yasmimqueiroznails.security.token.EmailVerificationTokenGenerator;
 import com.rocha_inf.yasmimqueiroznails.security.token.TokenHashGenerator;
+import com.rocha_inf.yasmimqueiroznails.shared.config.AppPropertiesConfig;
 import com.rocha_inf.yasmimqueiroznails.shared.rabbitmq.publisher.EmailPublisher;
 import com.rocha_inf.yasmimqueiroznails.user.entity.User;
 import com.rocha_inf.yasmimqueiroznails.user.exception.UserNotFoundException;
@@ -28,22 +29,23 @@ public class EmailVerificationTokenService {
     private final TokenHashGenerator tokenHashGenerator;
     private final EmailPublisher emailPublisher;
     private final UserMapper userMapper;
+    private final AppPropertiesConfig appPropertiesConfig;
 
-    public EmailVerificationTokenService(EmailVerificationTokenGenerator tokenGenerator, EmailVerificationTokenRepository emailVerificationTokenRepository, UserRepository userRepository, TokenHashGenerator tokenHashGenerator, EmailPublisher emailPublisher, UserMapper userMapper) {
+    public EmailVerificationTokenService(EmailVerificationTokenGenerator tokenGenerator, EmailVerificationTokenRepository emailVerificationTokenRepository, UserRepository userRepository, TokenHashGenerator tokenHashGenerator, EmailPublisher emailPublisher, UserMapper userMapper, AppPropertiesConfig appPropertiesConfig) {
         this.tokenGenerator = tokenGenerator;
         this.emailVerificationTokenRepository = emailVerificationTokenRepository;
         this.userRepository = userRepository;
         this.tokenHashGenerator = tokenHashGenerator;
         this.emailPublisher = emailPublisher;
         this.userMapper = userMapper;
+        this.appPropertiesConfig = appPropertiesConfig;
     }
 
     public EmailVerificationToken create(RegisterResponse userRegister){
 
         User user = userRepository.findById(userRegister.id()).orElseThrow(() -> new UserNotFoundException("Usuário não encontrado"));
-
         String token = tokenGenerator.generate();
-        String url = "http://localhost:8080/auth/verify-email?token=" + token;
+        String url = appPropertiesConfig.url().backend() + "?token=" + token;
 
         String tokenHash = tokenHashGenerator.hash(token);
         EmailVerificationToken emailVerificationToken = new EmailVerificationToken(user, tokenHash);
