@@ -1,5 +1,6 @@
 package com.rocha_inf.yasmimqueiroznails.shared.rabbitmq.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.support.converter.JacksonJsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
@@ -7,13 +8,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@RequiredArgsConstructor
 public class RabbitMqConfig {
 
     private final RabbitMqPropertiesConfig mqPropertiesConfig;
-
-    public RabbitMqConfig(RabbitMqPropertiesConfig mqPropertiesConfig) {
-        this.mqPropertiesConfig = mqPropertiesConfig;
-    }
 
     @Bean
     public MessageConverter messageConverter() {

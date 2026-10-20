@@ -12,5 +12,4 @@ public record RabbitMqPropertiesConfig(Email email) {
         public record Verification(String queue, String routingKey) {}
 
     }
-
 }

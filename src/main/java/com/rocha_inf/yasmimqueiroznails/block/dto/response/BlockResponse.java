@@ -9,5 +9,4 @@ public record BlockResponse(
         String description,
         LocalDateTime startsAt,
         LocalDateTime endsAt
-) {
-}
+) {}

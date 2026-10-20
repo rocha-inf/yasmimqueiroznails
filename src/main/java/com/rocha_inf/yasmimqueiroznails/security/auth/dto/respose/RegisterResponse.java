@@ -11,5 +11,4 @@ public record RegisterResponse(
         String phoneNumber,
         String email,
         Role role
-) {
-}
+) {}

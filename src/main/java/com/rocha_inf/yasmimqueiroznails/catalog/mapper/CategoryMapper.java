@@ -10,4 +10,5 @@ public interface CategoryMapper {
 
     Category toEntity(CategoryRequest request);
     CategoryResponse toResponse(Category category);
+
 }

@@ -21,5 +21,4 @@ public record OfferingRequest(
 
         @NotNull(message = "Duração é obrigatória")
         Integer durationMinutes
-) {
-}
+) {}

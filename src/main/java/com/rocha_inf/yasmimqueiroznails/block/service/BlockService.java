@@ -9,54 +9,44 @@ import com.rocha_inf.yasmimqueiroznails.block.exceptions.BlockStartInPastExcepti
 import com.rocha_inf.yasmimqueiroznails.block.exceptions.InvalidBlockPeriodException;
 import com.rocha_inf.yasmimqueiroznails.block.mapper.BlockMapper;
 import com.rocha_inf.yasmimqueiroznails.block.repository.BlockRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 
 @Service
+@RequiredArgsConstructor
 public class BlockService {
 
-    private final BlockRepository blockRepository;
-    private final BlockMapper blockMapper;
-
-    public BlockService(BlockRepository blockRepository, BlockMapper blockMapper) {
-        this.blockRepository = blockRepository;
-        this.blockMapper = blockMapper;
-    }
+    private final BlockRepository repository;
+    private final BlockMapper mapper;
 
     public BlockResponse create(BlockRequest request){
 
-        validatePeriod(request.startsAt(), request.endsAt());
-        validateConflict(request.startsAt(), request.endsAt());
+        this.validate(request);
 
-        Block block = blockMapper.toEntity(request);
-        Block blockSaved = blockRepository.save(block);
+        Block block = mapper.toEntity(request);
+        Block blockSaved = repository.save(block);
 
-        return blockMapper.toResponse(blockSaved);
+        return mapper.toResponse(blockSaved);
 
     }
 
-    private void validatePeriod(LocalDateTime startsAt, LocalDateTime endsAt){
-
-        if (startsAt.isBefore(LocalDateTime.now())) {
+    private void validate(BlockRequest request){
+        if (request.startsAt().isBefore(LocalDateTime.now())) {
             throw new BlockStartInPastException("A data e hora do início do bloqueio não podem estar no passado");
         }
 
-        if (!startsAt.isBefore(endsAt)) {
+        if (!request.startsAt().isBefore(request.endsAt())) {
             throw new InvalidBlockPeriodException("A data e hora do início do bloqueio devem ser anteriores à data e hora do fim do bloqueio");
         }
 
-        if (endsAt.isBefore(startsAt.plusMinutes(5))) {
+        if (request.endsAt().isBefore(request.startsAt().plusMinutes(5))) {
             throw new BlockPeriodTooShortException("O bloqueio deve ter duração mínima de 5 minutos");
         }
-    }
 
-    private void validateConflict(LocalDateTime startsAt, LocalDateTime endsAt){
-
-        if (blockRepository.existsOverLapping(startsAt, endsAt)){
+        if (repository.existsOverlapping(request.startsAt(), request.endsAt())){
             throw new BlockPeriodConflictException("Já existe um bloqueio no intervalo informado");
         }
-
     }
 
 }

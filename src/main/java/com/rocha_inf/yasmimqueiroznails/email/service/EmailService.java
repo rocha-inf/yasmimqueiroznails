@@ -1,24 +1,20 @@
 package com.rocha_inf.yasmimqueiroznails.email.service;
 
-import com.rocha_inf.yasmimqueiroznails.security.auth.dto.respose.RegisterResponse;
 import com.rocha_inf.yasmimqueiroznails.security.auth.message.VerificationEmailMessage;
 import com.rocha_inf.yasmimqueiroznails.security.auth.message.WelcomeEmailMessage;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class EmailService {
 
     @Value("${spring.mail.username}")
     private String from;
-
     private final JavaMailSender javaMailSender;
-
-    public EmailService(JavaMailSender javaMailSender) {
-        this.javaMailSender = javaMailSender;
-    }
 
     public void send(String to, String subject, String body){
 
@@ -35,7 +31,8 @@ public class EmailService {
 
     public void sendWelcomeEmail(WelcomeEmailMessage message){
         String subject = "Boas vindas, " + message.firstName() + "!";
-        this.send(message.email(), subject, "Mensagem de boas vindas");
+        String body = "Mensagem de boas vindas";
+        this.send(message.email(), subject, body);
     }
 
     public void sendVerificationEmail(VerificationEmailMessage message){

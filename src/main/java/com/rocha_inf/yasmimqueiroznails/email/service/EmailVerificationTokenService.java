@@ -16,30 +16,23 @@ import com.rocha_inf.yasmimqueiroznails.user.entity.User;
 import com.rocha_inf.yasmimqueiroznails.user.exception.UserNotFoundException;
 import com.rocha_inf.yasmimqueiroznails.user.mapstruct.UserMapper;
 import com.rocha_inf.yasmimqueiroznails.user.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
 @Service
+@RequiredArgsConstructor
 public class EmailVerificationTokenService {
 
     private final EmailVerificationTokenGenerator tokenGenerator;
-    private final EmailVerificationTokenRepository emailVerificationTokenRepository;
+    private final EmailVerificationTokenRepository repository;
     private final UserRepository userRepository;
     private final TokenHashGenerator tokenHashGenerator;
     private final EmailPublisher emailPublisher;
     private final UserMapper userMapper;
     private final AppPropertiesConfig appPropertiesConfig;
 
-    public EmailVerificationTokenService(EmailVerificationTokenGenerator tokenGenerator, EmailVerificationTokenRepository emailVerificationTokenRepository, UserRepository userRepository, TokenHashGenerator tokenHashGenerator, EmailPublisher emailPublisher, UserMapper userMapper, AppPropertiesConfig appPropertiesConfig) {
-        this.tokenGenerator = tokenGenerator;
-        this.emailVerificationTokenRepository = emailVerificationTokenRepository;
-        this.userRepository = userRepository;
-        this.tokenHashGenerator = tokenHashGenerator;
-        this.emailPublisher = emailPublisher;
-        this.userMapper = userMapper;
-        this.appPropertiesConfig = appPropertiesConfig;
-    }
 
     public EmailVerificationToken create(RegisterResponse userRegister){
 
@@ -52,14 +45,30 @@ public class EmailVerificationTokenService {
 
         emailPublisher.publishVerificationEmail(new VerificationEmailMessage(userRegister.email(), url));
 
-        return emailVerificationTokenRepository.save(emailVerificationToken);
+        return repository.save(emailVerificationToken);
 
     }
 
     public void verifyEmail(String token){
 
         String tokenHash = tokenHashGenerator.hash(token);
-        EmailVerificationToken emailVerificationToken = emailVerificationTokenRepository.findByToken(tokenHash).orElseThrow(() -> new InvalidTokenException("Token inválido"));
+        EmailVerificationToken emailVerificationToken = repository.findByToken(tokenHash).orElseThrow(() -> new InvalidTokenException("Token inválido"));
+
+        this.validate(emailVerificationToken);
+
+        User user = emailVerificationToken.getUser();
+        user.activate();
+        userRepository.save(user);
+
+        emailVerificationToken.markAsUsed();
+        repository.save(emailVerificationToken);
+
+        WelcomeEmailMessage welcomeEmailMessage = userMapper.toWelcomeEmailMessage(user);
+        emailPublisher.publishWelcomeEmail(welcomeEmailMessage);
+
+    }
+
+    private void validate(EmailVerificationToken emailVerificationToken){
 
         if (emailVerificationToken.getExpiresAt().isBefore(LocalDateTime.now())){
             throw new TokenExpiredException("Token expirado");
@@ -68,18 +77,6 @@ public class EmailVerificationTokenService {
         if (emailVerificationToken.getUsedAt() != null) {
             throw new TokenAlredyUsedException("Token já utilizado");
         }
-
-        User user = emailVerificationToken.getUser();
-        user.activate();
-        userRepository.save(user);
-
-        emailVerificationToken.markAsUsed();
-        emailVerificationTokenRepository.save(emailVerificationToken);
-
-        WelcomeEmailMessage welcomeEmailMessage = userMapper.toWelcomeEmailMessage(user);
-        emailPublisher.publishWelcomeEmail(welcomeEmailMessage);
-
     }
-
 
 }

@@ -4,6 +4,7 @@ import com.rocha_inf.yasmimqueiroznails.catalog.dto.request.OfferingRequest;
 import com.rocha_inf.yasmimqueiroznails.catalog.dto.response.OfferingResponse;
 import com.rocha_inf.yasmimqueiroznails.catalog.service.OfferingService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,20 +14,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/offerings")
+@RequiredArgsConstructor
 public class OfferingController {
 
-    private final OfferingService offeringService;
-
-    public OfferingController(OfferingService offeringService) {
-        this.offeringService = offeringService;
-    }
+    private final OfferingService service;
 
     @PostMapping
     public ResponseEntity<OfferingResponse> create(@Valid @RequestBody OfferingRequest request){
-
-        OfferingResponse response = offeringService.create(request);
+        OfferingResponse response = service.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
-
     }
 
 }

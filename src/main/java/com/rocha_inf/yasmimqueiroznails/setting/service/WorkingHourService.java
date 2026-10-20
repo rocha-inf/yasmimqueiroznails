@@ -8,45 +8,42 @@ import com.rocha_inf.yasmimqueiroznails.setting.exception.WorkingHourPeriodConfl
 import com.rocha_inf.yasmimqueiroznails.setting.exception.WorkingHourPeriodTooShortException;
 import com.rocha_inf.yasmimqueiroznails.setting.mapper.WorkingHourMapper;
 import com.rocha_inf.yasmimqueiroznails.setting.repository.WorkingHourRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class WorkingHourService {
 
-    private final WorkingHourRepository workingHourRepository;
-    private final WorkingHourMapper workingHourMapper;
+    private final WorkingHourRepository repository;
+    private final WorkingHourMapper mapper;
 
-    public WorkingHourService(WorkingHourRepository workingHourRepository, WorkingHourMapper workingHourMapper) {
-        this.workingHourRepository = workingHourRepository;
-        this.workingHourMapper = workingHourMapper;
-    }
 
     public WorkingHourResponse create(WorkingHourRequest workingHourRequest) {
 
-        validatePeriod(workingHourRequest);
-        validateConflict(workingHourRequest);
+        validate(workingHourRequest);
 
-        WorkingHour workingHour = workingHourMapper.toEntity(workingHourRequest);
-        WorkingHour savedWorkingHour = workingHourRepository.save(workingHour);
+        WorkingHour workingHour = mapper.toEntity(workingHourRequest);
+        WorkingHour savedWorkingHour = repository.save(workingHour);
 
-        return workingHourMapper.toResponse(savedWorkingHour);
+        return mapper.toResponse(savedWorkingHour);
     }
 
-    public void validatePeriod(WorkingHourRequest workingHourRequest) {
+
+    private void validate(WorkingHourRequest workingHourRequest){
 
         if (!workingHourRequest.startsAt().isBefore(workingHourRequest.endsAt())) {
             throw new InvalidWorkingHourException("O horário de início deve ser anterior ao horário de término.");
         }
+
         if (workingHourRequest.endsAt().isBefore(workingHourRequest.startsAt().plusMinutes(5))) {
             throw new WorkingHourPeriodTooShortException("O horário de funcionamento deve ter duração mínima de 5 minutos");
         }
 
-    }
-
-    public void validateConflict(WorkingHourRequest workingHourRequest) {
-        if (workingHourRepository.existOverLapping(workingHourRequest.dayOfWeek(), workingHourRequest.startsAt(), workingHourRequest.endsAt())) {
+        if (repository.existsOverlapping(workingHourRequest.dayOfWeek(), workingHourRequest.startsAt(), workingHourRequest.endsAt())) {
             throw new WorkingHourPeriodConflictException("Já existe um horário de funcionamento para o período informado.");
         }
+
     }
 
 }

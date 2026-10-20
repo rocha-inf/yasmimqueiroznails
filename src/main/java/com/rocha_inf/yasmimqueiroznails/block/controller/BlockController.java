@@ -4,6 +4,7 @@ import com.rocha_inf.yasmimqueiroznails.block.dto.request.BlockRequest;
 import com.rocha_inf.yasmimqueiroznails.block.dto.response.BlockResponse;
 import com.rocha_inf.yasmimqueiroznails.block.service.BlockService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,17 +14,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/blocks")
+@RequiredArgsConstructor
 public class BlockController {
 
-    private final BlockService blockService;
-
-    public BlockController(BlockService blockService) {
-        this.blockService = blockService;
-    }
+    private final BlockService service;
 
     @PostMapping
     public ResponseEntity<BlockResponse> create(@Valid @RequestBody BlockRequest request){
-        BlockResponse response = blockService.create(request);
+        BlockResponse response = service.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 

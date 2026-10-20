@@ -1,15 +1,12 @@
 package com.rocha_inf.yasmimqueiroznails.security.auth.service;
 
-import com.rocha_inf.yasmimqueiroznails.email.entity.EmailVerificationToken;
+
 import com.rocha_inf.yasmimqueiroznails.email.exception.InvalidTokenException;
-import com.rocha_inf.yasmimqueiroznails.email.service.EmailService;
 import com.rocha_inf.yasmimqueiroznails.email.service.EmailVerificationTokenService;
 import com.rocha_inf.yasmimqueiroznails.security.auth.dto.request.LoginRequest;
 import com.rocha_inf.yasmimqueiroznails.security.auth.dto.request.RegisterRequest;
 import com.rocha_inf.yasmimqueiroznails.security.auth.dto.respose.LoginResponse;
 import com.rocha_inf.yasmimqueiroznails.security.auth.dto.respose.RegisterResponse;
-import com.rocha_inf.yasmimqueiroznails.security.auth.message.WelcomeEmailMessage;
-import com.rocha_inf.yasmimqueiroznails.shared.rabbitmq.publisher.EmailPublisher;
 import com.rocha_inf.yasmimqueiroznails.user.entity.User;
 import com.rocha_inf.yasmimqueiroznails.user.enums.UserStatus;
 import com.rocha_inf.yasmimqueiroznails.user.exception.EmailAlreadyExistsException;
@@ -17,6 +14,7 @@ import com.rocha_inf.yasmimqueiroznails.user.exception.PhoneNumberAlreadyExistsE
 import com.rocha_inf.yasmimqueiroznails.user.mapstruct.UserMapper;
 import com.rocha_inf.yasmimqueiroznails.user.repository.UserRepository;
 import com.rocha_inf.yasmimqueiroznails.security.jwt.JwtService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -26,6 +24,7 @@ import org.springframework.stereotype.Service;
 import java.util.Objects;
 
 @Service
+@RequiredArgsConstructor
 public class AuthService {
 
     private final UserRepository userRepository;
@@ -35,16 +34,19 @@ public class AuthService {
     private final JwtService jwtService;
     private final EmailVerificationTokenService emailVerificationTokenService;
 
-    public AuthService(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtService jwtService, EmailVerificationTokenService emailVerificationTokenService) {
-        this.userRepository = userRepository;
-        this.userMapper = userMapper;
-        this.passwordEncoder = passwordEncoder;
-        this.authenticationManager = authenticationManager;
-        this.jwtService = jwtService;
-        this.emailVerificationTokenService = emailVerificationTokenService;
+    public RegisterResponse register(RegisterRequest request) throws EmailAlreadyExistsException, PhoneNumberAlreadyExistsException {
+
+        this.validateRegister(request);
+        String encodedPassword = passwordEncoder.encode(request.password());
+
+        User user = userMapper.toEntity(request, encodedPassword);
+        RegisterResponse response = userMapper.toRegisterResponse(userRepository.save(user));
+        emailVerificationTokenService.create(response);
+
+        return response;
     }
 
-    public RegisterResponse register(RegisterRequest request) throws EmailAlreadyExistsException, PhoneNumberAlreadyExistsException {
+    private void validateRegister(RegisterRequest request){
 
         if (userRepository.existsByEmailAndStatusNot(request.email(), UserStatus.DELETED)){
             throw new EmailAlreadyExistsException("E-mail já cadastrado");
@@ -53,17 +55,6 @@ public class AuthService {
         if (userRepository.existsByPhoneNumberAndStatusNot(request.phoneNumber(), UserStatus.DELETED)){
             throw new PhoneNumberAlreadyExistsException("Número de telefone já cadastrado");
         }
-
-        String encodedPassword = passwordEncoder.encode(request.password());
-
-        User user = userMapper.toEntity(request, encodedPassword);
-        User savedUser = userRepository.save(user);
-
-        RegisterResponse response = userMapper.toRegisterResponse(savedUser);
-        emailVerificationTokenService.create(response);
-
-        return response;
-
     }
 
 

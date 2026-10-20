@@ -1,6 +1,6 @@
 package com.rocha_inf.yasmimqueiroznails.security.jwt;
 
-import com.rocha_inf.yasmimqueiroznails.security.user.AuthenticatedUser;
+import com.rocha_inf.yasmimqueiroznails.security.principal.AuthenticatedUser;
 import com.rocha_inf.yasmimqueiroznails.user.entity.User;
 import com.rocha_inf.yasmimqueiroznails.user.exception.UserNotFoundException;
 import com.rocha_inf.yasmimqueiroznails.user.repository.UserRepository;
@@ -8,6 +8,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -21,15 +22,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserRepository userRepository;
-
-    public JwtFilter(JwtService jwtService, UserRepository userRepository) {
-        this.jwtService = jwtService;
-        this.userRepository = userRepository;
-    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -49,10 +46,8 @@ public class JwtFilter extends OncePerRequestFilter {
 
                 UsernamePasswordAuthenticationToken authentication = UsernamePasswordAuthenticationToken.authenticated(authenticatedUser, null, List.of(authority));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-
             }
         }
         filterChain.doFilter(request, response);
-
     }
 }

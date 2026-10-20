@@ -16,5 +16,4 @@ public record BlockRequest(
 
         @NotNull(message = "Data de fim do bloqueio é obrigatório")
         LocalDateTime endsAt
-) {
-}
+) {}

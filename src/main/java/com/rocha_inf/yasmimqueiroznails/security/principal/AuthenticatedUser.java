@@ -1,4 +1,4 @@
-package com.rocha_inf.yasmimqueiroznails.security.user;
+package com.rocha_inf.yasmimqueiroznails.security.principal;
 
 import com.rocha_inf.yasmimqueiroznails.user.enums.Role;
 
@@ -8,5 +8,4 @@ public record AuthenticatedUser(
         UUID id,
         String email,
         Role role
-) {
-}
+) {}

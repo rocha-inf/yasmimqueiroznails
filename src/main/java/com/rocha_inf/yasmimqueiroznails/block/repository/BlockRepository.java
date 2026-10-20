@@ -16,6 +16,6 @@ public interface BlockRepository extends JpaRepository<Block, UUID> {
         FROM Block b
         WHERE b.startsAt < :endsAt AND b.endsAt > :startsAt AND b.deletedAt IS NULL
     """)
-    boolean existsOverLapping(LocalDateTime startsAt, LocalDateTime endsAt);
+    boolean existsOverlapping(LocalDateTime startsAt, LocalDateTime endsAt);
 
 }

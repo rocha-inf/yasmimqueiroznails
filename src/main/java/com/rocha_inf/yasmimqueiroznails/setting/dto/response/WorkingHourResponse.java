@@ -8,5 +8,4 @@ public record WorkingHourResponse(
         DayOfWeek dayOfWeek,
         String startsAt,
         String endsAt
-) {
-}
+) {}

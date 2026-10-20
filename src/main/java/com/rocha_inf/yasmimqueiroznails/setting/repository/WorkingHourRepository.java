@@ -16,6 +16,6 @@ public interface WorkingHourRepository extends JpaRepository<WorkingHour, UUID> 
         FROM WorkingHour w
         WHERE w.dayOfWeek = :dayOfWeek AND w.startsAt < :endsAt AND w.endsAt > :startsAt
     """)
-    boolean existOverLapping(DayOfWeek dayOfWeek, LocalTime startsAt, LocalTime endsAt);
+    boolean existsOverlapping(DayOfWeek dayOfWeek, LocalTime startsAt, LocalTime endsAt);
 
 }

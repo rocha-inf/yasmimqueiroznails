@@ -15,5 +15,4 @@ public record WorkingHourRequest(
 
         @NotNull(message = "Horário de término é obrigatório")
         LocalTime endsAt
-) {
-}
+) {}

@@ -4,22 +4,19 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.rocha_inf.yasmimqueiroznails.security.config.JwtPropertiesConfig;
+import com.rocha_inf.yasmimqueiroznails.security.jwt.config.JwtPropertiesConfig;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class JwtService {
 
     private final JwtPropertiesConfig jwtPropertiesConfig;
     private final Algorithm algorithm;
-
-    public JwtService(JwtPropertiesConfig jwtPropertiesConfig) {
-        this.jwtPropertiesConfig = jwtPropertiesConfig;
-        this.algorithm = Algorithm.HMAC256(jwtPropertiesConfig.secret());
-    }
 
     public String generateToken(UUID id){
         return JWT.create()
@@ -32,7 +29,6 @@ public class JwtService {
 
     public Optional<UUID> validateToken(String token){
         try{
-
             DecodedJWT decodedJWT = JWT.require(algorithm)
                     .withIssuer(jwtPropertiesConfig.issuer())
                     .build()

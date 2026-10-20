@@ -11,4 +11,5 @@ public interface BlockMapper {
 
     Block toEntity(BlockRequest blockRequest);
     BlockResponse toResponse(Block block);
+
 }

@@ -5,21 +5,15 @@ import com.rocha_inf.yasmimqueiroznails.security.auth.dto.respose.RegisterRespon
 import com.rocha_inf.yasmimqueiroznails.security.auth.message.WelcomeEmailMessage;
 import com.rocha_inf.yasmimqueiroznails.user.entity.User;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-    default User toEntity(RegisterRequest request, String encodedPassword){
-        if(request == null || encodedPassword == null) return null;
-
-        return new User(
-                request.firstName(), request.lastName(), request.phoneNumber(),
-                request.email(), encodedPassword
-        );
-    }
+    @Mapping(target = "passwordHash", source = "encodedPassword")
+    User toEntity(RegisterRequest request, String encodedPassword);
 
     RegisterResponse toRegisterResponse(User user);
-
     WelcomeEmailMessage toWelcomeEmailMessage(User user);
 
 }
