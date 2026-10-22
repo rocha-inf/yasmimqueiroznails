@@ -1,4 +1,4 @@
-package com.rocha_inf.yasmimqueiroznails.security.config;
+package com.rocha_inf.yasmimqueiroznails.security.auth.config;
 
 import com.rocha_inf.yasmimqueiroznails.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

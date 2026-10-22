@@ -26,15 +26,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http){
         return http
-                .authorizeHttpRequests(request -> request
-                        .requestMatchers(HttpMethod.POST,"/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/auth/verify-email").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/offerings").hasRole("PROFESSIONAL")
-                        .requestMatchers(HttpMethod.POST, "/category/create").hasRole("PROFESSIONAL")
-                        .requestMatchers(HttpMethod.POST, "/blocks/once").hasRole("PROFESSIONAL")
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .anyRequest().authenticated()
-                )
+                .authorizeHttpRequests(AuthorizationConfig::configure)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
