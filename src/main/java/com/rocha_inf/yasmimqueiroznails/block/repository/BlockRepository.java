@@ -18,4 +18,12 @@ public interface BlockRepository extends JpaRepository<Block, UUID> {
     """)
     boolean existsOverlapping(LocalDateTime startsAt, LocalDateTime endsAt);
 
+
+    @Query("""
+        SELECT COUNT(b) > 0
+        FROM Block b
+        WHERE b.startsAt < :endsAt AND b.endsAt > :startsAt AND b.deletedAt IS NULL AND b.id <> :id
+    """)
+    boolean existsOverlappingExcludingId(UUID id, LocalDateTime startsAt, LocalDateTime endsAt);
+
 }
