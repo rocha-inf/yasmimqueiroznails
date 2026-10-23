@@ -1,6 +1,7 @@
 package com.rocha_inf.yasmimqueiroznails.catalog.controller;
 
 import com.rocha_inf.yasmimqueiroznails.catalog.dto.request.CategoryRequest;
+import com.rocha_inf.yasmimqueiroznails.catalog.dto.request.CategoryUpdateRequest;
 import com.rocha_inf.yasmimqueiroznails.catalog.dto.response.CategoryResponse;
 import com.rocha_inf.yasmimqueiroznails.catalog.service.CategoryService;
 import jakarta.validation.Valid;
@@ -12,6 +13,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/categories")
@@ -27,9 +30,21 @@ public class CategoryController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<CategoryResponse>> findAll(Pageable pageable) {
+    public ResponseEntity<Page<CategoryResponse>> findAll(@PageableDefault(size = 15, sort = "name", direction = Sort.Direction.ASC) Pageable pageable) {
         Page<CategoryResponse> response = service.findAll(pageable);
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<CategoryResponse> update(@PathVariable UUID id, @RequestBody CategoryUpdateRequest request){
+        CategoryResponse response = service.update(id, request);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable UUID id){
+        service.delete(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 }
