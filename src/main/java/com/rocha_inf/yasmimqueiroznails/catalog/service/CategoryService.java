@@ -7,6 +7,8 @@ import com.rocha_inf.yasmimqueiroznails.catalog.exception.CategoryNameAlreadyExi
 import com.rocha_inf.yasmimqueiroznails.catalog.mapper.CategoryMapper;
 import com.rocha_inf.yasmimqueiroznails.catalog.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -26,5 +28,8 @@ public class CategoryService {
         return mapper.toResponse(repository.save(category));
     }
 
+    public Page<CategoryResponse> findAll(Pageable pageable){
+        return repository.findAll(pageable).map(mapper::toResponse);
+    }
 
 }
