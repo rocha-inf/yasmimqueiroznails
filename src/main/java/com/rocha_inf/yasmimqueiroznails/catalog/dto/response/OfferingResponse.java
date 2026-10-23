@@ -8,6 +8,7 @@ public record OfferingResponse(
         UUID id,
         UUID categoryId,
         String name,
+        String description,
         BigDecimal price,
         Integer durationMinutes
 ) {}

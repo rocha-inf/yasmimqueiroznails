@@ -28,7 +28,7 @@ public class CategoryService {
         return repository.findAllByDeletedAtIsNull(pageable).map(mapper::toResponse);
     }
 
-    private Category findByIdAndDeletedAtIsNull(UUID id){
+    public Category findByIdAndDeletedAtIsNull(UUID id){
         return repository.findByIdAndDeletedAtIsNull(id).orElseThrow(() -> new CategoryNotFoundException("Categoria não encontrada"));
     }
 

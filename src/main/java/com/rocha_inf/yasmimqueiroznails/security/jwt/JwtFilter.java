@@ -39,7 +39,7 @@ public class JwtFilter extends OncePerRequestFilter {
             Optional<UUID> id = jwtService.validateToken(token);
 
             if (id.isPresent()) {
-                User user = userRepository.findUserByIdAndDeletedAtIsNull(id.get()).orElseThrow(() -> new UserNotFoundException("Nenhum usuário ativo com esse id foi encontrado"));
+                User user = userRepository.findByIdAndDeletedAtIsNull(id.get()).orElseThrow(() -> new UserNotFoundException("Nenhum usuário ativo com esse id foi encontrado"));
 
                 AuthenticatedUser authenticatedUser = new AuthenticatedUser(id.get(), user.getEmail(), user.getRole());
                 SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + authenticatedUser.role().name());
